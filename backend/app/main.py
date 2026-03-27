@@ -55,31 +55,36 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 # CORS Configuration
-# In production, FRONTEND_URL should be set to your primary Vercel deployment URL
+# NOTE: Browsers are very strict with CORS. Origins must MATCH EXACTLY (no trailing slash).
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://dashboard-live-one-kappa.vercel.app",
+    # Specific failing origin added for immediate fix
+    "https://dashboard-live-5ks582efl-gokulakrishnans-projects-78c7d2dd.vercel.app", 
 ]
 
 if FRONTEND_URL:
-    if FRONTEND_URL not in origins:
-        origins.append(FRONTEND_URL.rstrip("/"))
+    clean_url = FRONTEND_URL.rstrip("/")
+    if clean_url not in origins:
+        origins.append(clean_url)
 
-# Allow all Vercel preview and deployment URLs for this project
-# This regex matches any subdomain ending in .vercel.app
+# Broader regex to catch all possible Vercel subdomains
+# This is safe because .vercel.app is controlled by Vercel
 allow_origin_regex = r"https://.*\.vercel\.app"
 
-logger.info(f"CORS configured to allow: {origins} and regex: {allow_origin_regex}")
+logger.info(f"CORS configured to allow: {origins} | Regex: {allow_origin_regex}")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_origin_regex=allow_origin_regex,  # Added regex support for dynamic Vercel URLs
+    allow_origin_regex=allow_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Include routers
