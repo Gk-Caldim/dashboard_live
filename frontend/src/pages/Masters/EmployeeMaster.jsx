@@ -375,7 +375,7 @@ const EmployeeMaster = () => {
   const handleAddEmployeeClick = () => {
     setShowAddEmployeeModal(true);
     setNewEmployee({
-      id: '',
+      employee_id: '',
       name: '',
       email: '',
       department: '',
@@ -1136,11 +1136,11 @@ const EmployeeMaster = () => {
                 <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3">Basic Information</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">ID <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Employee ID <span className="text-red-500">*</span></label>
                     <input
                       type="text"
-                      value={newEmployee.id || ''}
-                      onChange={(e) => handleNewEmployeeChange('id', e.target.value)}
+                      value={newEmployee.employee_id || ''}
+                      onChange={(e) => handleNewEmployeeChange('employee_id', e.target.value)}
                       className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-black"
                       placeholder="Enter employee ID"
                     />

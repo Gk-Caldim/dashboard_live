@@ -441,6 +441,7 @@ const DepartmentMaster = () => {
     const fixedColumnIds = ['department_id', 'name', 'head', 'employees', 'budget', 'location', 'status', 'email'];
 
     const payload = {
+      department_id: deptData.department_id || '',
       name: deptData.name || '',
       head: deptData.head || '',
       employees: parseInt(deptData.employees) || 0,

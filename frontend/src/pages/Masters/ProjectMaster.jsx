@@ -111,6 +111,7 @@ const ProjectMaster = () => {
   // Helper to nest custom fields for API request
   const transformProjectForSave = (projectData) => {
     const payload = {
+      project_id: projectData.project_id || '',
       name: projectData.name,
       manager: projectData.manager,
       status: projectData.status || 'Planning',
