@@ -55,18 +55,21 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 # CORS
+# In production, FRONTEND_URL should be set to your Vercel deployment URL
 origins = [
-    "https://automated-manufacturing.vercel.app",   
-    "https://automated-manufact-git-6ff091-gokulakrishnans-projects-78c7d2dd.vercel.app",  # preview
-    "https://automated-manufacturing-kdmeekg5b.vercel.app", 
     "http://localhost:5173",  # local frontend testing
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 
-if FRONTEND_URL and FRONTEND_URL not in origins:
-    origins.append(FRONTEND_URL)
+# Add FRONTEND_URL if it's set in environment variables
+if FRONTEND_URL:
+    if FRONTEND_URL not in origins:
+        origins.append(FRONTEND_URL)
+    # Also allow common Vercel preview patterns if needed, 
+    # but FRONTEND_URL is the primary source of truth.
+    logger.info(f"CORS configured to allow: {origins}")
 
 app.add_middleware(
     CORSMiddleware,
