@@ -31,7 +31,7 @@ const EmployeeMaster = () => {
 
   // Load columns from localStorage
   const [columns, setColumns] = useState(() => {
-    const savedColumns = localStorage.getItem('employee_columns_v4');
+    const savedColumns = localStorage.getItem('employee_columns_v5');
     return savedColumns ? JSON.parse(savedColumns) : initialColumns;
   });
 
@@ -295,7 +295,7 @@ const EmployeeMaster = () => {
 
   // Save columns to localStorage
   useEffect(() => {
-    localStorage.setItem('employee_columns_v4', JSON.stringify(columns));
+    localStorage.setItem('employee_columns_v5', JSON.stringify(columns));
   }, [columns]);
 
   // Filter employees
@@ -371,6 +371,29 @@ const EmployeeMaster = () => {
     return pageNumbers;
   };
 
+  const fixedColumnIds = ['employee_id', 'name', 'email', 'department', 'role', 'status', 'created_at', 'updated_at'];
+
+  // Helper to nest custom fields for API request
+  const transformEmployeeForSave = (empData) => {
+    const payload = {
+      employee_id: empData.employee_id || null,
+      name: empData.name || '',
+      email: empData.email || '',
+      department: empData.department || '',
+      role: empData.role || '',
+      status: empData.status || 'Active',
+      custom_fields: {}
+    };
+
+    Object.keys(empData).forEach(key => {
+      if (!fixedColumnIds.includes(key) && key !== 'custom_fields' && key !== 'id') {
+        payload.custom_fields[key] = empData[key];
+      }
+    });
+
+    return payload;
+  };
+
   // Handle Add Employee button click
   const handleAddEmployeeClick = () => {
     setShowAddEmployeeModal(true);
@@ -392,7 +415,8 @@ const EmployeeMaster = () => {
   // Save new employee
   const saveNewEmployee = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/employees`, newEmployee);
+      const payload = transformEmployeeForSave(newEmployee);
+      await axios.post(`${API_BASE_URL}/employees`, payload);
       await fetchEmployees();
       setShowAddEmployeeModal(false);
       setNewEmployee({});
@@ -447,7 +471,8 @@ const EmployeeMaster = () => {
   // Save employee edit
   const saveEdit = async () => {
     try {
-      await axios.put(`${API_BASE_URL}/employees/${editingId}`, editForm);
+      const payload = transformEmployeeForSave(editForm);
+      await axios.put(`${API_BASE_URL}/employees/${editingId}`, payload);
       await fetchEmployees();
       setEditingId(null);
       setEditForm({});
@@ -1240,12 +1265,13 @@ const EmployeeMaster = () => {
                 <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3">Basic Information</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">ID</label>
+                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Employee ID <span className="text-red-500">*</span></label>
                     <input
                       type="text"
-                      value={editForm.id || ''}
-                      disabled
-                      className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-800/80"
+                      value={editForm.employee_id || ''}
+                      onChange={(e) => handleEditFormChange('employee_id', e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                      placeholder="Enter employee ID"
                     />
                   </div>
                   <div>

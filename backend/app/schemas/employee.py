@@ -12,7 +12,6 @@ class EmployeeBase(BaseModel):
     custom_fields: dict = {}
 
 class EmployeeCreate(EmployeeBase):
-    id: int | None = None
     pass
 
 class EmployeeUpdate(BaseModel):
